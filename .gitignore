@@ -1,0 +1,19 @@
+# Node
+node_modules/
+dist/
+.build/
+.nuxt/
+*.log
+
+# Environnement
+.env
+.env.*
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+# IDE/OS
+.DS_Store
+.vscode/
+.idea/
