@@ -1,7 +1,8 @@
 // server/api/forums/index.get.ts
-import { db } from '~/server/db/client'
+import {db} from '~/server/db/client'
+import {forums} from "~/server/db/schema";
 
 export default defineEventHandler(async () => {
-    const [rows] = await db.execute('SELECT * FROM forums ORDER BY date_creation DESC')
-    return rows
+    const allForums = await db.select().from(forums)
+    return allForums
 })
