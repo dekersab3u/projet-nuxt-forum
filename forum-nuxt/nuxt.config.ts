@@ -6,8 +6,14 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/devtools',
-    // Ajoute Vuetify ici
+    '@pinia/nuxt',
+    '@vuetify/nuxt'
   ],
+  nitro: {
+    experimental: {
+      websocket: true
+    }
+  },
 
   vite: {
     define: {

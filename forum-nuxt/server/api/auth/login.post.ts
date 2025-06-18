@@ -1,19 +1,28 @@
-import { db } from '~/server/db/client'
-import { compare } from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import { defineWrappedResponseHandler } from '~/server/utils/mysql'
+import bcrypt from 'bcrypt'
 
-export default defineEventHandler(async (event) => {
+export default defineWrappedResponseHandler(async (event) => {
     const body = await readBody(event)
-    const rows = await db.execute('SELECT * FROM utilisateurs WHERE email = ?', [body.email])
-    const user = Array.isArray(rows[0]) ? rows[0][0] : null
+    const { email, password } = body
+    const db = event.context.mysql
 
-    if (!user || !(await compare(body.password, user.mot_de_passe))) {
-        throw createError({ statusCode: 401, statusMessage: 'Invalid credentials' })
+    const [rows]: any = await db.execute('SELECT * FROM users WHERE email = ?', [email])
+    const user = rows[0]
+
+    if (!user) {
+        return { error: 'Utilisateur non trouvé' }
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, 'secret', { expiresIn: '2h' })
+    const isValid = await bcrypt.compare(password, user.password)
 
-    setCookie(event, 'token', token, { httpOnly: true, maxAge: 7200 })
+    if (!isValid) {
+        return { error: 'Mot de passe invalide' }
+    }
 
-    return { success: true }
+    return {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+    }
 })

@@ -28,6 +28,9 @@ Start the development server on `http://localhost:3000`:
 # npm
 npm run dev
 
+# le projet tourne sous DOCKER. Se placer dans le dossier forum-nuxt et exécuter :
+docker compose up --build
+
 # pnpm
 pnpm dev
 

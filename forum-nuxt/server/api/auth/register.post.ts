@@ -1,16 +1,18 @@
-import { db } from '~/server/db/client'
-import { hash } from 'bcrypt'
-import { utilisateurs } from '~/server/db/schema'
+import { defineWrappedResponseHandler } from '~/server/utils/mysql'
+import bcrypt from 'bcrypt'
 
-export default defineEventHandler(async (event) => {
+export default defineWrappedResponseHandler(async (event) => {
     const body = await readBody(event)
-    const hashed = await hash(body.password, 10)
+    const { username, email, password } = body
+    const db = event.context.mysql
 
-    const result = await db.insert(utilisateurs).values({
-        nom: body.nom,
-        email: body.email,
-        mot_de_passe: hashed,
-    })
+    const hashedPassword = await bcrypt.hash(password, 10)
 
-    return { success: true, id: result.insertId }
+    await db.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [
+        username,
+        email,
+        hashedPassword,
+    ])
+
+    return { success: true }
 })
