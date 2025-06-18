@@ -18,7 +18,7 @@ export default defineNuxtConfig({
     define: {
       'process.env.DEBUG': false,
     },
-    plugins: [vuetify()],
+    plugins: [vuetify({ autoImport: true })],
   },
 
   css: [

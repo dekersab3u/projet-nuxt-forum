@@ -1,4 +1,5 @@
 import { defineWrappedResponseHandler } from '~/server/utils/mysql'
+import { broadcastMessageToAllClients } from '~/server/routes/_ws'
 
 export default defineWrappedResponseHandler(async (event) => {
     const body = await readBody(event)
@@ -10,6 +11,14 @@ export default defineWrappedResponseHandler(async (event) => {
         [sujetId, userId, content]
     )
 
+    broadcastMessageToAllClients({
+        type: 'new-message',
+        sujetId,
+        content,
+        userId,
+        createdAt: new Date().toISOString(),
+    })
+
     return { success: true }
 })
 
@@ -19,12 +28,6 @@ import { messages } from '~/server/db/schema'
 import { broadcast } from '~/server/ws'
 import { getUserFromSession } from '~/server/utils/auth'
 import { z } from 'zod'
-
-export default defineEventHandler(async (event) => {
-    const user = await getUserFromSession(event)
-    if (!user) {
-        return sendError(event, createError({ statusCode: 401, statusMessage: 'Unauthorized' }))
-    }
 
     const body = await readBody(event)
     const schema = z.object({

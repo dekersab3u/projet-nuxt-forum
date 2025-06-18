@@ -3,6 +3,8 @@ node_modules/
 dist/
 .build/
 .nuxt/
+forum-nuxt/node_modules/
+forum-nuxt/package-lock.json
 *.log
 
 # Environnement
