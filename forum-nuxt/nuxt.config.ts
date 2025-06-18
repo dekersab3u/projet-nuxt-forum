@@ -6,8 +6,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/devtools',
-    '@pinia/nuxt',
-    '@vuetify/nuxt'
+    '@pinia/nuxt'
   ],
   nitro: {
     experimental: {
